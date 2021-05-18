@@ -1,0 +1,35 @@
+---
+- hosts: default
+  tasks:
+    - name: install dependencies
+      become: yes
+      apt:
+        name:
+          - build-essential
+          - clang-11
+          - python3
+          - python3-pip
+          - python3-tk
+    - name: install python packages
+      pip:
+        name:
+          - pybind11
+          - matplotlib
+    - name: set clang-11 as default
+      become: yes
+      alternatives:
+        name: "{{ item }}"
+        link: "/usr/bin/{{ item }}"
+        path: "/usr/bin/{{ item }}-11"
+      with_items:
+        - clang
+        - clang++
+    - name: set python3 as default
+      become: yes
+      alternatives:
+        name: "{{ item }}"
+        link: "/usr/bin/{{ item }}"
+        path: "/usr/bin/{{ item }}3"
+      with_items:
+        - python
+        - pip
